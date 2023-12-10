@@ -1,0 +1,7 @@
+Golang
+
+https://yuminlee2.medium.com/go-string-rune-and-byte-efd2aa6034f6
+For range loop -  string gets converted to rune
+For loop - string gets converted to byte
+
+

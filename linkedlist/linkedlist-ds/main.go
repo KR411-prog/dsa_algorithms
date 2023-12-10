@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 type Node struct {
 	data int
@@ -59,8 +62,9 @@ func (ll *LinkedList) show() {
 	}
 	fmt.Printf("%d", curr.data)
 }
-//nth node from end of linked list with two traversals
-func (ll *LinkedList) nth_node_end(n int) (int,error) {
+
+// nth node from end of linked list with two traversals
+func (ll *LinkedList) nth_node_end(n int) (int, error) {
 	var len int
 	curr := ll.head
 
@@ -70,7 +74,7 @@ func (ll *LinkedList) nth_node_end(n int) (int,error) {
 	}
 
 	if len < n {
-		return 0,fmt.Errorf("%s", "not enough nodes")
+		return 0, fmt.Errorf("%s", "not enough nodes")
 	}
 	curr = ll.head
 	count := 0
@@ -82,40 +86,75 @@ func (ll *LinkedList) nth_node_end(n int) (int,error) {
 	}
 	fmt.Println(count)
 	if count == len-n {
-		return curr.data,nil
+		return curr.data, nil
 	}
-	return 0,nil
+	return 0, nil
 }
 
 // nth node from end of linked list with one traversal - two pointer solution
-func (ll *LinkedList) nth_node_end_two_ptr(n int) (int,error) {
-  ptr := ll.head
-  ptr_temp := ll.head
-  count,len := 0,0
-  curr := ll.head
+func (ll *LinkedList) nth_node_end_two_ptr(n int) (int, error) {
+	ptr := ll.head
+	ptr_temp := ll.head
+	count, len := 0, 0
+	curr := ll.head
 
-  for curr != nil {
-	  len++
-	  curr = curr.next
-  }
+	for curr != nil {
+		len++
+		curr = curr.next
+	}
 
-  if len < n {
-	  return 0,fmt.Errorf("%s", "not enough nodes")
-  }
+	if len < n {
+		return 0, fmt.Errorf("%s", "not enough nodes")
+	}
 
+	for count != n {
+		ptr_temp = ptr_temp.next
+		count += 1
+	}
 
-  for count != n {
-	ptr_temp = ptr_temp.next
-	count += 1
-  }
-
-  for ptr_temp != nil {
-	ptr = ptr.next
-	ptr_temp = ptr_temp.next
-  }
-  return ptr.data,nil
+	for ptr_temp != nil {
+		ptr = ptr.next
+		ptr_temp = ptr_temp.next
+	}
+	return ptr.data, nil
 }
 
+func (ll *LinkedList) insert_into_sorted_ll(d int) {
+	curr := ll.head
+
+	node := &Node{
+		data: d,
+	}
+	for curr != nil && curr.next != nil && d >= curr.next.data {
+		curr = curr.next
+	}
+	fmt.Println("")
+	fmt.Println(curr.data)
+	if curr == ll.head && d <= curr.data {
+		node.next = curr
+		ll.head = node
+		return
+	}
+	temp := curr.next
+	node.next = temp
+	curr.next = node
+	
+// Reverse Linked List
+// https://leetcode.com/problems/reverse-linked-list
+// func reverseList(head *ListNode) *ListNode {
+// 	var prev *ListNode
+// 	  fmt.Println(prev)
+// 	  curr := head
+
+
+// 	  for curr != nil {
+// 		  temp := curr.Next
+// 		  curr.Next = prev
+// 		  prev = curr
+// 		  curr = temp
+// 	  }
+// 	  return prev
+//   }
 func main() {
 	ll := &LinkedList{}
 
@@ -137,7 +176,7 @@ func main() {
 	ll.insert(14)
 	ll.show()
 	fmt.Println("")
-	d,err := ll.nth_node_end(7)
+	d, err := ll.nth_node_end(7)
 
 	if err != nil {
 		fmt.Println(err)
@@ -145,12 +184,26 @@ func main() {
 		fmt.Println(d)
 	}
 
-
-	d,err =  ll.nth_node_end_two_ptr(7)
+	d, err = ll.nth_node_end_two_ptr(7)
 	if err != nil {
 		fmt.Println(err)
 	} else {
 		fmt.Println(d)
 	}
+	ll.insert(16)
+	ll.insert(18)
+	ll.insert(20)
+	ll.insert(40)
+	ll.insert_into_sorted_ll(1)
+	fmt.Println("")
+	ll.show()
+	ll.insert_into_sorted_ll(15)
+	fmt.Println("")
+	ll.show()
+	ll.insert_into_sorted_ll(35)
+	fmt.Println("")
+	ll.show()
+	fmt.Println("")
+	ll.reverse_ll()
 
 }
