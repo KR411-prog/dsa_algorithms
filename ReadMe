@@ -1,7 +1,147 @@
 Golang
 
+Reading characters of a string
 https://yuminlee2.medium.com/go-string-rune-and-byte-efd2aa6034f6
 For range loop -  string gets converted to rune
 For loop - string gets converted to byte
 
+fmt.Printf("%T %v %c", 'c', 'c', 'c')
+Output: int32 99 c
 
+rune of a char is always represented in single quotes as 'c'
+Rune is unicode.
+the most common one to read char by char in a word is,
+
+word0 := "Hello"
+for _,c := range word0 {
+	if c == 'l' {
+		fmt.Println("I saw l")
+	}
+}
+
+================================================
+The back quotes are used to create raw string literals which can contain any type of character:
+
+Raw string literals are character sequences between back quotes ``. Within the quotes, any character is legal except back quote.
+================================================
+Reading line by line from a file
+	file, err := os.Open("file1.txt")
+
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	defer file.Close()
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+		fmt.Println(line)
+	}
+================================================
+Reading word by word from a file
+	file, err := os.Open("file1.txt")
+
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	defer file.Close()
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanWords)
+	for scanner.Scan() {
+		fmt.Println(scanner.Text())
+	}
+============================================
+Sorting
+Simple sorting
+s := []string{"c", "a", "b"}
+	sort.Strings(s)
+
+Sorting using custom operator using less function
+	family := []struct {
+		Name string
+		Age int
+	} {
+		{
+			Name: "Radha",
+			Age: 38,
+		},
+		{
+			Name: "Kairav",
+			Age: 13,
+		},
+		{
+			Name: "Veera",
+			Age: 36,
+		},
+	}
+	sort.SliceStable(family, func(i,j int) bool{
+		return family[i].Name < family[j].Name
+	})
+
+	fmt.Println(family)
+
+===========================================
+multiple files in the main package
+
+package main
+example1.go
+example2.go
+main.go --> this main.go is mandatory inside main package
+
+Inside main.go:
+func main() {
+	example1()
+	fmt.Println()
+	example2()
+}
+
+go run *.go
+go run .
+===========================================
+sync.WaitGroup in goroutine
+
+The waitgroup can be thought of as a global counter which we can use to wait for all the goroutines to finish.
+
+===========================================
+Two methods to avoid data race condition
+1. sync.Waitgroup --> read and write wait for each other
+2. channels --> blocking with channels
+https://www.sohamkamani.com/golang/data-races/
+
+Look into data_race_condition program under advance_golang
+
+==============================================
+Initializing channel
+
+done := make(chan int) //creates a unbuffered channel with malloc
+var done chan int //creates a channel var with nil as default for channel. This creates a deadlock condition as you can use a nil channel to send data
+==============================================
+
+Converting string to io.Reader to use inside scanner
+scanner := bufio.NewScanner(strings.NewReader(input))
+==============================================
+
+Even without channels, the data is shared but it causes race condition since there is no proper synchronization or locking mechanisms
+I apologize for the confusion in my previous response. In the provided code, the variable n is shared between the two goroutines without using channels, but it is not done in a safe and synchronized way. The behavior of the program is undefined and may lead to a race condition.
+
+In Go, when multiple goroutines access shared data without proper synchronization, such as using locks or channels, it can result in race conditions where the behavior of the program becomes unpredictable. In the original code you provided, the second goroutine increments n concurrently with the first goroutine reading it, and this can lead to data races.
+
+To safely share data between goroutines, it's essential to use synchronization mechanisms like channels or locks. The corrected example I provided in the previous response uses a mutex (from the sync package) to ensure that access to the shared variable n is synchronized between the two goroutines.
+
+If synchronization is not used, the behavior of the program is undefined, and it may produce inconsistent or unexpected results due to the race condition. To write robust concurrent programs in Go, it's crucial to use proper synchronization mechanisms to coordinate access to shared data.
+
+Look at this commented out code in /Users/rramadoss/Documents/Learning/golang/dsa_algorithms/advance_golang/sync_mutex/main.go
+"n" is shared between two goroutines without channels. So race condition happened.
+https://www.sohamkamani.com/golang/mutex/
+
+Bundling a mutex along with the data itself will make it less confusing, and more readable
+type intLock struct {
+	val int
+	sync.Mutex
+}
+==============================================
+Why Golang is not Object Oriented Language?
+
+While other OOP Languages like java,c++ uses Classes, Inheritence, Golang takes it more simple, light weight, flexible with Composition.
+Composition -structs and methods.
