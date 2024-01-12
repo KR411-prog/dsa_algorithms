@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 )
+
 type Animal struct {
 	Name string
 }
